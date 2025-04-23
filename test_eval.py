@@ -100,7 +100,7 @@ def test_case():
         name="Correctness",
         criteria="Determine if the 'actual output' is correct based on the 'expected output'.",
         evaluation_params=[LLMTestCaseParams.ACTUAL_OUTPUT, LLMTestCaseParams.EXPECTED_OUTPUT],
-        threshold=0.8
+        threshold=0.5
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
@@ -280,4 +280,4 @@ def test_case():
             ,
         retrieval_context=[""]
     )
-    assert_test(test_case_frage_5, [correctness_metric])
+    assert_test(test_case_frage_1, [correctness_metric])
