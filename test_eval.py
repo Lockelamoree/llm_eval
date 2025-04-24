@@ -161,24 +161,7 @@ qwq_answers = ["""The **IT Forensic Hayabusa Scan Tool** appears to be a hypothe
                         ### Important Notes:
                         - **Proprietary/Custom Tool**: Since "Hayabusa" is not a widely recognized commercial tool, its specific features and outputs may vary based on the organization’s implementation.  
                         - **Context Dependency**: Your analysis of Hayabusa reports should strictly follow the criteria you outlined (IoCs, scope, persistence, impact) to ensure consistency in criticality ratings.  
-                        - **Benign Activity**: If a report lacks clear IoCs or shows routine system behavior (e.g., standard update checks), it should be flagged as inconclusive or benign.""",  """"<details type=""reasoning"" done=""true"" duration=""9"">
-                    <summary>Thought for 9 seconds</summary>
-                    > Okay, the user is asking about the limitations of the IT Forensic Hayabusa Scan Tool. Let me start by recalling what I know from the previous conversation. The user has already asked about what the tool is and what data it can analyze. Now they want to know its limitations.
-                    > 
-                    > First, I need to consider that Hayabusa isn't a well-known commercial tool, so it might be a proprietary or custom solution. That means its limitations could depend on how it's implemented. Since the user mentioned Hayabusa reports before, maybe the tool has specific constraints in data analysis or reporting.
-                    > 
-                    > I should think about common limitations in forensic tools. For example, maybe it has compatibility issues with certain file formats or operating systems. Or perhaps it struggles with encrypted data. Also, if it's not updated regularly, it might miss new threats. 
-                    > 
-                    > Another angle is the scope of analysis. Maybe it's good at certain types of data but not others. For instance, maybe it's weak in memory analysis or cloud environments. The user previously asked about data it can analyze, so pointing out gaps there would make sense.
-                    > 
-                    > User access and permissions could be a limitation too. If the tool requires admin rights and doesn't have them, it might not function properly. Also, performance issues with large datasets could be a problem, especially with big forensic images.
-                    > 
-                    > Integration with other tools might be another point. If it doesn't play well with SIEM or threat intelligence platforms, that's a drawback. Legal and privacy concerns could also be a limitation, especially with handling sensitive data.
-                    > 
-                    > I should also mention that without knowing the exact features, some limitations are assumptions. Maybe the user is trying to understand where the tool might fail in their specific use case. They might be evaluating tools or planning an implementation, so highlighting these points can help them make informed decisions.
-                    > 
-                    > I need to structure the answer clearly, listing each limitation with explanations. Make sure to note that some limitations are speculative due to the tool's obscurity. Also, offer to help analyze a specific report if they have one. That way, the answer is both informative and helpful for their next steps.
-                    </details>
+                        - **Benign Activity**: If a report lacks clear IoCs or shows routine system behavior (e.g., standard update checks), it should be flagged as inconclusive or benign.""",  """
                     The **IT Forensic Hayabusa Scan Tool** (assuming it is a proprietary or custom solution, as it is not a widely recognized commercial tool) likely has limitations common to many forensic and threat detection tools. However, since its specific design and capabilities are not publicly documented, some limitations are inferred based on typical constraints of such tools. Below are potential limitations you might encounter:
 
                     ---
@@ -509,7 +492,7 @@ def test_case():
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
-        actual_output=gemma_answers[0],
+        actual_output=qwq_answers[0],
         expected_output="""
             Hayabusa is an open-source, high-performance forensic and threat hunting tool designed to analyze Windows event logs. 
             Developed by the Yamato Security group in Japan, its name—meaning "peregrine falcon" in Japanese—reflects its focus 
@@ -556,7 +539,7 @@ def test_case():
 
     test_case_frage_2= LLMTestCase(
         input="What are the limitations of the IT Forensic Hayabusa Scan Tool?",
-        actual_output=gemma_answers[1],
+        actual_output=qwq_answers[1],
         expected_output="""
             While Hayabusa is a powerful tool for Windows event log analysis and threat hunting, it has certain limitations that users should be aware of:
 
@@ -612,7 +595,7 @@ def test_case():
 
     test_case_frage_3= LLMTestCase(
         input="What data can the IT Forensic Ha-yabusa Scan Tool analyze?",
-        actual_output=gemma_answers[2],
+        actual_output=qwq_answers[2],
         expected_output="""The IT Forensic Hayabusa Scan Tool is designed to analyze Windows Event Logs (EVTX files) for the purposes of digital forensics and threat hunting. 
             It focuses on identifying suspicious behavior and potential security incidents by parsing and evaluating event log data.
 
@@ -636,7 +619,7 @@ def test_case():
         input="""Read the two provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=gemma_answers[3],
+        actual_output=qwq_answers[3],
             
         expected_output="""The system associated with Report 2 should be prioritized for analysis due to the presence of a wider variety of unique detections, indicating potentially more complex or coordinated suspicious activity. Notable alerts include:
 
@@ -656,7 +639,7 @@ def test_case():
         input="""Read the five provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output= gemma_answers[4],
+        actual_output= qwq_answers[4],
         expected_output="""Investigation Priority Summary:
 
             Report 2 Highest Priority
@@ -685,4 +668,5 @@ def test_case():
             ,
         retrieval_context=[""]
     )
-    assert_test(test_case_frage_1, [correctness_metric])
+    #edit this function to change to correct question
+    assert_test(test_case_frage_2, [correctness_metric])
