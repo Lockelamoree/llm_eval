@@ -509,7 +509,7 @@ def test_case():
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
-        actual_output=deepseek_answers[0],
+        actual_output=llama_answers[0],
         expected_output="""
             Hayabusa is an open-source, high-performance forensic and threat hunting tool designed to analyze Windows event logs. 
             Developed by the Yamato Security group in Japan, its name—meaning "peregrine falcon" in Japanese—reflects its focus 
@@ -556,7 +556,7 @@ def test_case():
 
     test_case_frage_2= LLMTestCase(
         input="What are the limitations of the IT Forensic Hayabusa Scan Tool?",
-        actual_output=deepseek_answers[1],
+        actual_output=llama_answers[1],
         expected_output="""
             While Hayabusa is a powerful tool for Windows event log analysis and threat hunting, it has certain limitations that users should be aware of:
 
@@ -636,7 +636,7 @@ def test_case():
         input="""Read the two provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=deepseek_answers[3],
+        actual_output=llama_answers[3],
             
         expected_output="""The system associated with Report 2 should be prioritized for analysis due to the presence of a wider variety of unique detections, indicating potentially more complex or coordinated suspicious activity. Notable alerts include:
 
@@ -656,7 +656,7 @@ def test_case():
         input="""Read the five provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output= deepseek_answers[4],
+        actual_output= llama_answers[4],
         expected_output="""Investigation Priority Summary:
 
             Report 2 Highest Priority
@@ -685,4 +685,4 @@ def test_case():
             ,
         retrieval_context=[""]
     )
-    assert_test(test_case_frage_3, [correctness_metric])
+    assert_test(test_case_frage_1, [correctness_metric])
