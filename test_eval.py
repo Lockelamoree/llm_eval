@@ -95,7 +95,7 @@ deepseek_answers=["""
             Answer: Analyze report_1.html first due to its broader timeframe and higher number of flagged events, suggesting more potential issues to investigate.""","""Based on the provided Hayabusa reports, you should analyze the system associated with report_5.html first. This report contains detections (191 events with hits) over a specific time frame (March 17-20), while the other reports do not mention detections. The higher number of detected events suggests potential malicious activity that requires immediate attention.""" ]
 
 
-hayabusa_answers = [
+gemma_answers = [
     "Okay, let's discuss the IT Forensic Hayabusa Scan Tool.\n\nBased on my understanding and experience in digital forensics and incident response, the **Hayabusa Scan Tool** is a powerful, open-source, command-line utility designed for rapid network reconnaissance and asset discovery. It's frequently used during the initial stages of an incident response or penetration testing engagement. \n\nHere's a breakdown of its key features and how it's used:\n\n* **Purpose:** Hayabusa excels at quickly identifying live hosts, open ports, and running services on a network. It's designed to be *fast* and *stealthy* – minimizing the footprint during scanning.\n* **How it Works:** It leverages a combination of techniques, including TCP SYN scans, UDP scans, and ICMP pings, to gather information.  It's often used with custom scripting to automate the discovery process and tailor the scan to specific needs.\n* **Key Capabilities:**\n    * **Host Discovery:** Identifies active hosts on a network.\n    * **Port Scanning:** Determines which ports are open on those hosts.\n    * **Service Detection:** Attempts to identify the services running on open ports (e.g., HTTP, SSH, DNS).\n    * **OS Fingerprinting (limited):** Can sometimes provide clues about the operating system running on a host.\n    * **Customizable:**  Highly configurable through command-line arguments and scripting.\n* **Why it's valuable in Incident Response:**\n    * **Rapid Asset Inventory:** Quickly builds a picture of the network landscape, which is crucial for understanding the scope of an incident.\n    * **Identifying Compromised Systems:**  Can help pinpoint systems that are potentially infected or under attack.\n    * **Understanding Attack Surface:** Reveals potential vulnerabilities and entry points for attackers.\n* **Open Source:** Being open-source means it's freely available, auditable, and can be customized to meet specific requirements.\n\n**In the context of forensic reports I analyze, Hayabusa scan reports typically provide a baseline of network activity and help establish a timeline of events.**  I look for anomalies in the scan results – unexpected open ports, unusual services, or hosts that shouldn't be present on the network – as indicators of compromise.\n\nYou can find more information about Hayabusa here: [https://github.com/hayabusascanner/hayabusa](https://github.com/hayabusascanner/hayabusa)",
     "Okay, let's discuss the limitations of the IT Forensic Hayabusa Scan Tool. While it's a powerful reconnaissance tool, it's crucial to understand its weaknesses to avoid misinterpreting results or relying on it as a sole source of truth during an investigation. Here's a breakdown of its limitations:\n\n**1. Stealth & Evasion Techniques:**\n\n*   **Firewall & IDS/IPS Detection:** Hayabusa, despite being designed for stealth, can still be detected by firewalls, intrusion detection systems (IDS), and intrusion prevention systems (IPS). These systems can block scans or alert administrators.\n*   **Rate Limiting:** Some systems implement rate limiting, which can slow down or block Hayabusa scans.\n*   **Spoofing Detection:** Sophisticated systems can detect spoofed source IP addresses used to evade detection.\n\n**2. Accuracy & Reliability:**\n\n*   **Service & OS Fingerprinting Limitations:** Service and operating system detection are not always accurate. Hayabusa relies on banner grabbing and TCP/IP stack characteristics, which can be misleading or easily spoofed.\n*   **False Positives:**  Hayabusa can sometimes report ports as open when they are actually filtered or blocked.\n*   **Incomplete Results:** Network congestion, firewalls, or other factors can lead to incomplete scan results.\n\n**3. Scope & Depth of Analysis:**\n\n*   **Network-Level Only:** Hayabusa is primarily a network-level reconnaissance tool. It does *not* analyze host-based data (file systems, memory, logs, etc.).\n*   **Limited Application Layer Analysis:** Its application layer analysis is limited to banner grabbing and basic HTTP header analysis. It cannot perform deep packet inspection or analyze application-specific protocols.\n*   **No Vulnerability Scanning:** Hayabusa does not perform vulnerability scanning. It only identifies open ports and running services.\n\n**4. Network Conditions & Configuration:**\n\n*   **Network Congestion:** Network congestion can significantly slow down scans and lead to inaccurate results.\n*   **Network Segmentation:** Network segmentation (VLANs, firewalls) can prevent Hayabusa from reaching certain hosts or ports.\n*   **NAT & Proxies:** Network Address Translation (NAT) and proxies can complicate scans and make it difficult to identify the true source of traffic.\n\n**5. Evolving Security Landscape:**\n\n*   **Modern Firewalls & Security Appliances:** Modern firewalls and security appliances are becoming increasingly sophisticated at detecting and blocking reconnaissance scans.\n*   **Dynamic Network Environments:** Dynamic network environments (cloud infrastructure, containerization) can make it difficult to maintain accurate network maps and scan results.\n\n**In summary:** Hayabusa is a valuable tool for initial network reconnaissance, but it should not be relied upon as a sole source of truth. It's essential to combine its results with other tools and techniques (vulnerability scanners, host-based analysis, log analysis) to gain a comprehensive understanding of the security posture of a network. It's also crucial to be aware of its limitations and potential for false positives or incomplete results.",
 
@@ -509,7 +509,7 @@ def test_case():
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
-        actual_output=phi_answers[0],
+        actual_output=gemma_answers[0],
         expected_output="""
             Hayabusa is an open-source, high-performance forensic and threat hunting tool designed to analyze Windows event logs. 
             Developed by the Yamato Security group in Japan, its name—meaning "peregrine falcon" in Japanese—reflects its focus 
@@ -556,7 +556,7 @@ def test_case():
 
     test_case_frage_2= LLMTestCase(
         input="What are the limitations of the IT Forensic Hayabusa Scan Tool?",
-        actual_output=phi_answers[1],
+        actual_output=gemma_answers[1],
         expected_output="""
             While Hayabusa is a powerful tool for Windows event log analysis and threat hunting, it has certain limitations that users should be aware of:
 
@@ -612,7 +612,7 @@ def test_case():
 
     test_case_frage_3= LLMTestCase(
         input="What data can the IT Forensic Ha-yabusa Scan Tool analyze?",
-        actual_output=phi_answers[2],
+        actual_output=gemma_answers[2],
         expected_output="""The IT Forensic Hayabusa Scan Tool is designed to analyze Windows Event Logs (EVTX files) for the purposes of digital forensics and threat hunting. 
             It focuses on identifying suspicious behavior and potential security incidents by parsing and evaluating event log data.
 
@@ -636,7 +636,7 @@ def test_case():
         input="""Read the two provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=phi_answers[3],
+        actual_output=gemma_answers[3],
             
         expected_output="""The system associated with Report 2 should be prioritized for analysis due to the presence of a wider variety of unique detections, indicating potentially more complex or coordinated suspicious activity. Notable alerts include:
 
@@ -656,7 +656,7 @@ def test_case():
         input="""Read the five provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output= phi_answers[4],
+        actual_output= gemma_answers[4],
         expected_output="""Investigation Priority Summary:
 
             Report 2 Highest Priority
@@ -685,4 +685,4 @@ def test_case():
             ,
         retrieval_context=[""]
     )
-    assert_test(test_case_frage_5, [correctness_metric])
+    assert_test(test_case_frage_1, [correctness_metric])
