@@ -685,4 +685,4 @@ def test_case():
             ,
         retrieval_context=[""]
     )
-    assert_test(test_case_frage_1, [correctness_metric])
+    assert_test(test_case_frage_5, [correctness_metric])
