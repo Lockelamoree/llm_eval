@@ -10,8 +10,179 @@ import pytest
 from deepeval import assert_test
 from deepeval.metrics import GEval
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+nina_v2_answers = ["""The IT Forensic Hayabusa Scan Tool is a specialized log analysis and threat detection tool designed for cybersecurity incident response and digital forensics. It is part of the broader Hayabusa suite, which focuses on parsing and analyzing system logs (e.g., Windows Event Logs, Linux logs, and application logs) to identify suspicious or malicious activity. Here's a breakdown of its key aspects:
 
+Key Features and Purpose
+Log Analysis:
+Scans and parses logs from endpoints, servers, and network devices to detect anomalies, such as unusual login attempts, command-line activity, or file modifications.
+Supports integration with SIEMs (Security Information and Event Management) and EDRs (Endpoint Detection and Response) for centralized alerting.
+Threat Detection:
+Uses predefined rules and machine learning models to identify indicators of compromise (IOCs), lateral movement, privilege escalation, and other signs of compromise.
+Focuses on detecting advanced persistent threats (APTs) and stealthy malware that evade traditional antivirus solutions.
+Forensic Capabilities:
+Generates detailed reports with timestamps, affected systems, and actionable insights for incident responders.
+Helps reconstruct attack timelines and identify the root cause of breaches.
+Open-Source and Customizable:
+Hayabusa is open-source, allowing organizations to tailor detection rules to their specific environments.
+Supports integration with threat intelligence feeds (e.g., AlienVault OTX, VirusTotal) for real-time validation of suspicious artifacts.
+Criticality Rating and Prioritization
+When analyzing Hayabusa reports, the tool assigns criticality ratings (Low, Medium, High, Critical) based on:
 
+Indicators of Compromise (IOCs): Presence of known malicious hashes, IPs, or domains.
+Persistence Mechanisms: Detection of suspicious startup items, scheduled tasks, or registry modifications.
+Impact Scope: Number of affected systems and sensitivity of compromised data.
+Tactics, Techniques, and Procedures (TTPs): Alignment with known adversary frameworks (e.g., MITRE ATT&CK).
+Reports are prioritized by severity, with Critical alerts requiring immediate action (e.g., ransomware deployment) and Low alerts indicating benign or false-positive activity.
+
+Use Cases
+Incident Response: Rapidly triage alerts and validate detections during active breaches.
+Compliance Audits: Ensure adherence to regulatory standards (e.g., GDPR, HIPAA) by identifying policy violations.
+Hunting Campaigns: Proactively search for signs of compromise in high-risk systems or user accounts.
+Example Workflow
+Deploy Hayabusa agents on endpoints to collect logs.
+Analyze logs for anomalies (e.g., a user account logging in at odd hours from a foreign IP).
+Generate a report with a High criticality rating if the activity aligns with a known attack pattern (e.g., password spraying).
+Prioritize the alert for investigation and remediation.
+Why It Matters
+Hayabusa bridges the gap between raw log data and actionable intelligence, enabling forensic investigators to:
+
+Reduce Mean Time to Detect (MTTD) by automating log parsing.
+Minimize False Positives through contextual analysis and threat intelligence.
+Support Legal Investigations with audit-ready reports and evidence chains.
+If you have specific Hayabusa reports to analyze, I can help summarize findings and assign criticality ratings.""","""The Hayabusa Scan Tool, while effective for detecting suspicious activities and anomalies in IT environments, has several limitations that users should consider:
+
+1. False Positives/Negatives
+False Positives: Heuristic-based detection may flag benign system behavior (e.g., legitimate scripts or user activity) as suspicious, requiring manual validation.
+False Negatives: Advanced or novel threats (e.g., zero-day exploits, custom malware) may evade detection if they bypass Hayabusa’s rule sets or heuristics.
+2. Signature Dependency
+Reliance on known signatures or patterns for certain detections may limit its ability to identify emerging or polymorphic threats not yet cataloged in its databases.
+3. Evasion Techniques
+Sophisticated attackers may employ evasion tactics (e.g., obfuscation, living-off-the-land tools) to bypass detection, reducing Hayabusa’s effectiveness in high-skill adversarial scenarios.
+4. Resource Consumption
+Forensic scans can be resource-intensive, potentially impacting system performance or causing delays in large-scale environments.
+5. Integration Limitations
+May not seamlessly integrate with all SIEMs, EDRs, or cloud platforms, leading to siloed data and requiring manual correlation with other tools.
+6. Contextual Blind Spots
+Lacks real-time monitoring capabilities and may miss transient or short-lived malicious activity (e.g., memory-resident malware) if scans are not scheduled frequently.
+7. Manual Analysis Requirements
+While Hayabusa automates detection, it often requires human expertise to interpret results, validate alerts, and prioritize remediation actions.
+8. Rule Set Limitations
+Effectiveness depends on the quality and timeliness of its detection rules. Outdated or incomplete rules may reduce accuracy.
+Summary:
+Hayabusa is a powerful forensic tool but should be used in conjunction with complementary solutions (e.g., EDRs, threat intelligence platforms) and human analysis to mitigate its limitations. Its value lies in its heuristic approach and open-source flexibility, but it is not a standalone solution for complex or evolving threats.""","""The IT Forensic Hayabusa Scan Tool is designed to analyze a wide range of system and network data to detect suspicious or malicious activity. Here’s a breakdown of the data it can analyze:
+
+1. System-Level Data
+Process and Command-Line Activity:
+Monitors running processes, command-line arguments, and execution patterns (e.g., PowerShell scripts, suspicious batch files).
+Detects anomalies like unexpected process trees or unusual command-line parameters.
+Windows Event Logs:
+Parses logs (e.g., Security, System, Application) for signs of compromise, such as failed login attempts, privilege escalations, or suspicious service activity.
+Registry and File Integrity:
+Scans registry keys for suspicious modifications (e.g., persistence mechanisms like startup entries).
+Analyzes file hashes and metadata to identify potentially malicious binaries or unexpected file changes.
+User and Account Activity:
+Tracks user logins, account creations, or password resets that may indicate compromise or lateral movement.
+2. Network and Communication Data
+Network Connections:
+Identifies unusual outbound connections, suspicious IP addresses, or unexpected communication with known malicious domains.
+Firewall/IDS/IPS Logs:
+Analyzes logs for alerts or anomalies flagged by existing security tools (e.g., detection of suspicious traffic patterns).
+3. Script and Log Analysis
+Script Execution:
+Focuses on PowerShell, Windows Script Host (WSH), and other scripting languages for signs of abuse (e.g., obfuscated scripts, command-and-control (C2) beaconing).
+Log Files:
+Parses application, system, and custom log files for irregularities or patterns matching known indicators of compromise (IOCs).
+4. Cloud and Hybrid Environments
+Cloud Metadata:
+In cloud-integrated deployments, Hayabusa can analyze metadata from platforms like AWS or Azure (e.g., resource creation, API calls, or misconfigurations).
+Container and Virtualization Logs:
+Detects suspicious activity in containerized environments (e.g., Docker, Kubernetes) or virtual machines.
+5. Behavioral and Heuristic Analysis
+Anomaly Detection:
+Uses heuristic rules to identify deviations from normal behavior (e.g., unexpected process execution, unusual file access patterns).
+Signature-Based Detection:
+Cross-references known malicious signatures (e.g., YARA rules, hash databases) against system data.
+6. Integration with External Data Sources
+Threat Intelligence Feeds:
+Correlates findings with external threat intelligence (e.g., MITRE ATT&CK tactics, known malicious IPs/domains).
+SIEM/EDR Outputs:
+Analyzes alerts or logs from existing security tools (e.g., SIEMs, EDRs) to provide contextual forensic insights.
+Key Focus Areas
+Hayabusa is particularly effective at detecting:
+
+Living-off-the-Land (LotL) attacks (e.g., PowerShell abuse).
+Persistence mechanisms (e.g., registry modifications, startup entries).
+Lateral movement (e.g., suspicious network connections or user account activity).
+Malware evasion techniques (e.g., obfuscated scripts or memory-resident payloads).
+Limitations to Note
+While Hayabusa analyzes the above data, its effectiveness depends on:
+
+Rule/Signature Updates: Outdated rules may miss novel threats.
+Contextual Analysis: Requires human validation to distinguish false positives from real threats.
+Data Accessibility: May miss transient or encrypted traffic if not properly configured.
+For a comprehensive analysis, Hayabusa is often used alongside other tools (e.g., EDRs, SIEMs) to fill gaps in detection and response.""","""Based on the Hayabusa reports, Computer_2 (associated with report_2.html) should be prioritized for analysis due to the following critical findings:
+
+Higher number of high-severity alerts: Report_2.html contains 3 high alerts (all "System File Execution Location Anomaly") compared to report_1.html's 2 high alerts 
+report_2.pdf
+. While the unique detections for high alerts in report_2.html are only 1 unique rule, the alert volume suggests repeated suspicious activity.
+Unique medium alert indicating potential compromise: Report_2.html includes a "Password Reset By Admin" alert (1 detection) by rule author Darkrael, which could indicate unauthorized administrative activity or a compromised account 
+report_2.pdf
+. This alert is absent in report_1.html and warrants immediate investigation.
+Alert diversity and volume: Report_2.html has 7 unique medium detections (e.g., privilege escalation, suspicious PowerShell, and app activity) compared to report_1.html's 4 unique medium detections 
+report_2.pdf
+. The presence of a password reset alert further elevates its criticality.
+Criticality Rating:
+
+report_2.html: High (due to password reset alert and repeated high-severity alerts).
+report_1.html: Medium (primarily medium alerts with no unique high-severity indicators beyond 2 alerts).
+Action: Investigate Computer_2 first to assess the password reset alert and repeated system file anomalies, as these may indicate a targeted attack or misuse of administrative privileges.""","""Based on the analysis of the five Hayabusa reports, System 2 (associated with Report 2, source_id=2) should be prioritized for analysis first. Here's the reasoning:
+
+Key Findings for Each Report
+Report 1 (source_id=1)
+Alert Type: "User Added To Local Admin Grp" (24 alerts).
+Unique Detections: 1.
+Criticality: High, but the alert count is relatively low compared to others.
+Report 2 (source_id=2)
+Alert Type: "User Added To Local Admin Grp" (360 alerts).
+Unique Detections: 1.
+Criticality: Extremely high. Adding 360 users to admin groups is a massive anomaly, likely indicating a severe compromise or misconfiguration. This could enable lateral movement, data exfiltration, or privilege escalation.
+Report 3 (source_id=3)
+Alert Type: "User Added To Local Admin Grp" (360 alerts).
+Unique Detections: 1.
+Criticality: Same as Report 2, but the alert count is identical. Both systems require urgent attention, but the user must prioritize one.
+Report 4 (source_id=4)
+Alert Type: "Process Ran With High Privilege" (181 alerts).
+Unique Detections: 1.
+Criticality: High, but the alert count is lower than Reports 2/3. This could indicate privilege escalation attempts but is less severe than mass admin group additions.
+Report 5 (source_id=5)
+Alert Types: 4 unique alerts (e.g., suspicious app activity, privilege escalation).
+Total Alerts: 191.
+Criticality: Medium-high. The diversity of alerts suggests a broader attack surface, but the individual alert counts are lower than Reports 2/3.
+Why Prioritize System 2?
+Scale of the Alert: 360 alerts for the same critical alert type is an order of magnitude higher than other reports. This suggests a massive compromise or a misconfiguration that could be exploited at scale.
+Alert Type: "User Added To Local Admin Grp" is a high-impact alert. Compromised admin accounts can lead to:
+Lateral movement across the network.
+Unauthorized access to sensitive data.
+Deployment of malware or ransomware.
+Unique Detections: While the alert is repeated, the uniqueness (1) indicates a single detection rule triggered repeatedly, which could point to a scripted attack or a misconfigured policy.
+Next Steps for System 2
+Immediate Investigation:
+Review logs for the 360 admin group additions.
+Identify the users, timestamps, and source IPs involved.
+Check for suspicious accounts or anomalous login patterns.
+Containment:
+Revoke admin privileges for any suspicious accounts.
+Isolate the system if a breach is confirmed.
+Root Cause Analysis:
+Determine if the alert is due to a misconfiguration (e.g., a script erroneously adding users) or a genuine compromise.
+Preventive Measures:
+Implement stricter access controls and monitoring for admin group modifications.
+Review alerting rules to avoid false positives in the future.
+Why Not the Others?
+Reports 2 and 3 are equally critical, but the user must prioritize one. System 2 is chosen here due to the alert's criticality and scale.
+Report 5 has a diverse alert set, which may indicate a more complex attack, but the individual alert counts are lower.
+Reports 1 and 4 have fewer alerts and are less urgent compared to the others.
+By addressing System 2 first, the user can mitigate a high-risk threat that could cascade into broader network compromise."""]
 deepseek_answers=["""
             The IT Forensic Hayabusa Scan Tool is a specialized software designed for use in the field of cybersecurity, particularly within digital forensics and incident response. Here's an organized overview based on the analysis:
 
@@ -492,14 +663,13 @@ def test_case():
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
-        actual_output=qwq_answers[0],
+        actual_output=nina_v2_answers[0],
         expected_output="""
             Hayabusa is an open-source, high-performance forensic and threat hunting tool designed to analyze Windows event logs. 
             Developed by the Yamato Security group in Japan, its name—meaning "peregrine falcon" in Japanese—reflects its focus 
             on speed and precision in detecting threats.
 
-
-            🛠️ Key Features
+            Key Features
             Fast Forensics Timeline Generation: Hayabusa processes Windows event logs to produce a consolidated timeline in CSV 
             or JSONL format, facilitating efficient forensic analysis.
             docs.velociraptor.app
@@ -524,7 +694,7 @@ def test_case():
             Output Compatibility: The generated timelines can be analyzed using tools such as LibreOffice, Timeline Explorer, 
             Elastic Stack, and Timesketch.
 
-            🔧 Use Cases
+             Use Cases
             Incident Response: Quickly identify and investigate security incidents by analyzing event logs for signs of compromise.
 
             Threat Hunting: Proactively search for indicators of malicious activity across systems using predefined or custom Sigma rules.
@@ -539,7 +709,7 @@ def test_case():
 
     test_case_frage_2= LLMTestCase(
         input="What are the limitations of the IT Forensic Hayabusa Scan Tool?",
-        actual_output=qwq_answers[1],
+        actual_output=nina_v2_answers[1],
         expected_output="""
             While Hayabusa is a powerful tool for Windows event log analysis and threat hunting, it has certain limitations that users should be aware of:
 
@@ -594,8 +764,8 @@ def test_case():
 
 
     test_case_frage_3= LLMTestCase(
-        input="What data can the IT Forensic Ha-yabusa Scan Tool analyze?",
-        actual_output=qwq_answers[2],
+        input="What data can the IT Forensic Hayabusa Scan Tool analyze?",
+        actual_output=nina_v2_answers[2],
         expected_output="""The IT Forensic Hayabusa Scan Tool is designed to analyze Windows Event Logs (EVTX files) for the purposes of digital forensics and threat hunting. 
             It focuses on identifying suspicious behavior and potential security incidents by parsing and evaluating event log data.
 
@@ -619,7 +789,7 @@ def test_case():
         input="""Read the two provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=qwq_answers[3],
+        actual_output=nina_v2_answers[3],
             
         expected_output="""The system associated with Report 2 should be prioritized for analysis due to the presence of a wider variety of unique detections, indicating potentially more complex or coordinated suspicious activity. Notable alerts include:
 
@@ -639,7 +809,7 @@ def test_case():
         input="""Read the five provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=qwq_answers[4],
+        actual_output=nina_v2_answers[4],
         expected_output="""Investigation Priority Summary:
 
             Report 2 Highest Priority
@@ -669,4 +839,14 @@ def test_case():
         retrieval_context=[""]
     )
     #edit this function to change to correct question
-    assert_test(test_case_frage_1, [correctness_metric])
+    print("1")
+    assert_test(test_case_frage_5, [correctness_metric])
+    print("2")
+
+   # assert_test(test_case_frage_2, [correctness_metric])
+    print("3")
+    #assert_test(test_case_frage_3, [correctness_metric])
+    print("4")
+   # assert_test(test_case_frage_4, [correctness_metric])
+    print("5")
+    #assert_test(test_case_frage_5, [correctness_metric])
