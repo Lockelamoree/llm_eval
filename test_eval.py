@@ -10,6 +10,321 @@ import pytest
 from deepeval import assert_test
 from deepeval.metrics import GEval
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
+
+
+
+nina_v3_answers=["""The IT Forensic Hayabusa Scan Tool is a specialized log analysis and forensic investigation utility designed to detect suspicious or malicious activity in Windows-based systems. It is part of the broader Hayabua project, an open-source framework for analyzing Windows event logs and system artifacts to identify indicators of compromise (IOCs) and security incidents. Here's a breakdown of its key features and purpose:
+
+Key Features and Functionality
+Log Analysis:
+Parses Windows event logs (e.g., Security, System, Application logs) and other system artifacts (e.g., registry changes, process execution logs) to detect anomalies or suspicious patterns.
+Focuses on high-fidelity detection of post-compromise behaviors, such as unusual login attempts, suspicious PowerShell commands, or unexpected network connections.
+Rule-Based Detection:
+Uses predefined detection rules (often based on the MITRE ATT&CK framework) to flag activities aligned with known adversarial tactics, techniques, and procedures (TTPs).
+Examples include detecting lateral movement, privilege escalation, or data exfiltration attempts.
+Forensic Readiness:
+Designed for rapid deployment during incident response, enabling analysts to quickly scan systems for signs of compromise.
+Outputs structured reports (e.g., JSON, CSV) for further analysis or integration with SIEM tools.
+Lightweight and Efficient:
+Requires minimal system resources, making it suitable for deployment on endpoints or servers during live investigations.
+Can be run as a standalone script or integrated into automated workflows.
+Use Cases in IT Forensics
+Incident Response: Quickly triage endpoints for signs of compromise after a suspected breach.
+Threat Hunting: Proactively scan systems for low-and-slow attacks or advanced persistent threats (APTs).
+Compliance Auditing: Validate adherence to security policies by identifying misconfigurations or policy violations.
+Post-Incident Analysis: Reconstruct attack timelines by correlating log entries with known IOCs.
+Criticality and Context
+Hayabusa is a highly valuable tool in the forensic investigator's toolkit due to its ability to:
+
+Automate detection of complex attack patterns that might be missed in manual reviews.
+Reduce false positives by leveraging community-validated rules and heuristics.
+Accelerate response times by prioritizing alerts based on the severity and context of detected activities.
+However, its effectiveness depends on the quality of the input logs and the analyst's ability to interpret results in the context of the environment. False positives may still occur, especially in dynamic or misconfigured systems.
+
+Example Detection Scenarios
+Suspicious PowerShell invocation from a script engine (e.g., powershell.exe -encodedCommand).
+Unusual login activity from a non-standard time or location.
+Registry modifications associated with persistence mechanisms (e.g., adding a startup entry).
+Network connections to known malicious IP addresses or domains.
+Limitations
+Dependence on log integrity: If logs are tampered with or not properly configured (e.g., missing Sysmon logs), detections may be incomplete.
+Niche focus: Primarily optimized for Windows environments, so it may not be suitable for cross-platform investigations.
+Conclusion
+The Hayabusa Scan Tool is a critical asset for IT forensic investigators, enabling rapid detection of suspicious activity in Windows systems. Its rule-based approach and integration with forensic workflows make it a cornerstone of modern incident response and threat-hunting strategies. Analysts should pair it with manual analysis and contextual understanding to validate findings and avoid over-reliance on automated alerts.""", """The IT Forensic Hayabusa Scan Tool is a powerful forensic and incident response utility, but it has several limitations that users should consider when deploying or interpreting its results. Below are the key limitations, organized by category:
+
+1. Log Dependency and Integrity
+Incomplete or Missing Logs:
+Hayabusa relies heavily on Windows event logs (e.g., Security, System, Application) and system artifacts (e.g., registry, process logs). If these logs are incomplete, misconfigured, or not collected (e.g., missing Sysmon logs), the tool may miss critical evidence of compromise.
+Example: If Sysmon is not enabled, detections related to process creation or network connections may be absent.
+Log Tampering:
+Adversaries may delete or alter logs to evade detection. Hayabusa cannot detect or compensate for tampered logs, leading to false negatives or incomplete analysis.
+2. Rule-Based Detection Limitations
+Dependence on Predefined Rules:
+Hayabusa uses a rule-based detection engine (often aligned with MITRE ATT&CK). While effective for known TTPs, it may miss novel or highly obfuscated attacks that do not match existing rules.
+Example: A zero-day exploit with no matching detection rule would go undetected.
+False Positives/Negatives:
+Rules may generate false positives in complex or misconfigured environments (e.g., a legitimate PowerShell script flagged as suspicious). Conversely, subtle or multi-stage attacks may not trigger alerts if individual rules are not triggered.
+Example: A multi-stage attack that avoids triggering individual rules may be overlooked.
+3. Windows-Centric Focus
+Limited Cross-Platform Support:
+Hayabusa is optimized for Windows systems and may not support Linux or macOS environments. This limits its utility in heterogeneous IT infrastructures.
+Example: A breach involving Linux-based servers would require alternative tools for analysis.
+4. Resource and Scalability Constraints
+Lightweight but Not Scalable for Large Environments:
+While Hayabusa is lightweight for individual endpoints, deploying it across a large-scale enterprise may require orchestration tools or SIEM integration to manage output and reduce alert fatigue.
+Example: Running Hayabusa on 1,000 endpoints simultaneously may overwhelm analysts without automation.
+5. Expertise and Interpretation Requirements
+Requires Skilled Analysts:
+The tool outputs structured reports (e.g., JSON, CSV) but requires analysts to interpret results in context. Misinterpretation of alerts or lack of contextual understanding can lead to incorrect conclusions.
+Example: A detection rule flagging a PowerShell command may be a false positive if the command is part of a legitimate administrative script.
+6. No Real-Time Monitoring
+Reactive, Not Proactive:
+Hayabusa is a forensic scan tool, not a real-time monitoring solution. It identifies post-compromise activity but cannot detect active intrusions in real time.
+Example: A live attack may not be detected until a manual scan is initiated.
+7. Community-Driven Rule Limitations
+Rule Quality and Coverage:
+As an open-source project, Hayabusa’s detection rules are community-maintained. Rules may vary in quality, specificity, or coverage, and may not be rigorously tested in all environments.
+Example: A rule may flag a benign activity in a specific environment due to a lack of contextual awareness.
+8. No Built-In Remediation
+Detection Only:
+Hayabusa identifies suspicious activity but does not provide remediation guidance or automated response mechanisms. Analysts must manually investigate and remediate findings.
+Example: A detection of a suspicious registry modification requires manual analysis to determine if it is malicious and how to resolve it.
+Summary of Key Limitations
+Limitation
+Impact
+Log dependency
+Missed detections if logs are incomplete or tampered with.
+Rule-based detection
+May miss novel or multi-stage attacks.
+Windows-centric focus
+Not suitable for Linux/macOS environments.
+Scalability constraints
+Requires orchestration for large-scale deployments.
+Analyst expertise required
+Misinterpretation of alerts may lead to false conclusions.
+No real-time monitoring
+Cannot detect active intrusions in real time.
+Community-driven rules
+Variable quality and coverage may lead to false positives/negatives.
+No remediation capabilities
+Analysts must manually address findings.
+
+Recommendations for Mitigation
+Complement with Other Tools: Use Hayabusa alongside SIEMs, EDRs, and threat intelligence platforms for broader coverage.
+Enable Comprehensive Logging: Ensure Sysmon, Windows Event Logs, and registry monitoring are properly configured.
+Regularly Update Rules: Stay current with the Hayabusa rule set and customize rules for your environment.
+Train Analysts: Invest in training to interpret Hayabusa outputs accurately and contextualize alerts.
+By understanding these limitations, organizations can better integrate Hayabusa into their incident response workflows while mitigating its constraints.""","""The IT Forensic Hayabusa Scan Tool is designed to analyze a wide range of system and log data sources to detect suspicious or malicious activity. Below is a detailed breakdown of the types of data it can analyze:
+
+1. Windows Event Logs
+Hayabusa parses Windows event logs to identify anomalies or indicators of compromise (IOCs). Key log types include:
+
+Security Logs:
+Login attempts (e.g., failed logins, logins from unusual locations).
+Privilege escalations (e.g., elevation to admin or SYSTEM).
+Account modifications (e.g., password changes, new user creation).
+System Logs:
+System startup/shutdown events.
+Driver load/unload events (potentially suspicious drivers).
+Application Logs:
+Application-specific errors or warnings that may indicate misuse or compromise.
+Example: A sudden spike in failed login attempts (Event ID 4625) or a PowerShell script execution (Event ID 1) could trigger alerts.
+
+2. System Artifacts
+Hayabusa analyzes system artifacts to detect post-compromise behaviors and persistence mechanisms:
+
+Process Execution Logs:
+Tracks processes launched by users or services, including command-line arguments.
+Flags suspicious processes (e.g., powershell.exe with encoded commands).
+Windows Management Instrumentation (WMI) Events:
+Detects WMI-based lateral movement or script execution.
+Scheduled Tasks and Startup Entries:
+Identifies suspicious tasks or registry keys added to startup locations (e.g., Run keys).
+Windows PowerShell Logs:
+Analyzes PowerShell command-line arguments for obfuscation or malicious patterns.
+Example: A PowerShell script invoking Invoke-Mimikatz or a suspicious scheduled task added to the RunOnce registry key would be flagged.
+
+3. Registry Modifications
+Hayabusa monitors Windows registry changes for persistence or configuration tampering:
+
+Persistence Mechanisms:
+Modifications to startup keys (e.g., HKCU\Software\Microsoft\Windows\CurrentVersion\Run).
+Changes to service configurations (e.g., HKLM\System\CurrentControlSet\Services).
+Security Policy Changes:
+Tampering with Group Policy Objects (GPOs) or local security policies.
+Example: A new registry entry added to the Run key pointing to a malicious executable would trigger an alert.
+
+4. Network Activity
+Hayabusa analyzes network-related data to detect suspicious connections or exfiltration attempts:
+
+Network Connection Logs:
+Unusual outbound connections to known malicious IP addresses or domains.
+High-volume data transfers or connections to rare ports.
+DNS Query Logs:
+Suspicious DNS queries (e.g., to C2 domains or random subdomains).
+Example: A process like svchost.exe initiating a connection to a known Command-and-Control (C2) server would be flagged.
+
+5. User Activity and Authentication
+Hayabusa tracks user behavior and authentication events to detect compromise:
+
+Login/Logout Events:
+Logins from unusual locations, times, or devices.
+Multiple failed login attempts followed by a successful login.
+Privilege Escalation:
+Users elevating privileges (e.g., SeDebugPrivilege or SeTakeOwnershipPrivilege).
+Example: A user account logging in from a foreign country at 3 AM, or a service account being used interactively, could indicate compromise.
+
+6. File and Artifact Analysis
+Hayabusa examines file system artifacts for signs of compromise:
+
+Suspicious File Creation/Modification:
+Files with obfuscated names or unusual extensions in sensitive directories (e.g., C:\Windows\Temp).
+Unusual file hashes or signatures matching known malware.
+Script Analysis:
+PowerShell, VBScript, or batch scripts with suspicious content (e.g., base64-encoded payloads).
+Example: A PowerShell script with a Invoke-WebRequest command downloading a file from a suspicious URL would be flagged.
+
+7. Sysmon Logs (if enabled)
+If Sysmon (System Monitor) is configured, Hayabusa leverages its detailed event logs for deeper analysis:
+
+Process Creation Events:
+Tracks command-line arguments and parent-child process relationships.
+Network Connection Events:
+Logs detailed network activity, including source/destination IPs and ports.
+Image Load Events:
+Detects suspicious DLLs or drivers being loaded into processes.
+Example: A process like explorer.exe loading a suspicious DLL from a temporary directory would trigger an alert.
+
+8. Output and Reporting
+Hayabusa generates structured reports (e.g., JSON, CSV) containing:
+
+Detection Rules Matched:
+Alerts based on predefined rules (e.g., MITRE ATT&CK-aligned detections).
+Raw Log Entries:
+Extracted log lines for manual review.
+Summary of Findings:
+Prioritized alerts with contextual information (e.g., user, process, timestamp).
+Example: A report might highlight a PowerShell script execution (Event ID 1) with a suspicious command-line argument, along with the associated user and timestamp.
+
+Key Considerations
+Data Availability: Hayabusa’s effectiveness depends on the availability and integrity of the data sources listed above. Missing or tampered logs may lead to false negatives.
+Rule Coverage: The tool relies on detection rules (e.g., for PowerShell abuse or persistence mechanisms). Novel or highly obfuscated attacks may not be detected.
+Contextual Analysis: Analysts must interpret findings in the context of the environment (e.g., distinguishing between legitimate administrative scripts and malicious ones).
+Summary Table
+Data Type
+Examples of Analyzed Data
+Windows Event Logs
+Security logins, privilege escalations, system shutdowns.
+System Artifacts
+Process execution logs, WMI events, scheduled tasks, PowerShell scripts.
+Registry Modifications
+Startup entries, service configurations, policy changes.
+Network Activity
+Outbound connections, DNS queries, unusual traffic patterns.
+User Activity
+Login/logout events, privilege escalations, account modifications.
+File System Artifacts
+Suspicious files, script content, file hashes.
+Sysmon Logs
+Process creation, network connections, image loads (if enabled).
+
+By analyzing these data sources, Hayabusa provides a comprehensive view of potential security incidents, enabling forensic investigators to prioritize and respond to threats effectively.""","""Based on the provided Hayabusa reports, you should prioritize analyzing the system associated with report_2.html (source_id=1) first. Here's why:
+
+Severity and Volume of Alerts:
+Report 2 contains 3 high alerts and 416 medium alerts, compared to report 1's 2 high alerts and 1,318 medium alerts 
+report_2.pdf
+. While both reports have high alerts, report 2's alerts are more diverse (e.g., System File Execution Location Anomaly, Potential Privileged System Service Operation), suggesting a broader range of suspicious activity 
+report_2.pdf
+.
+Report 2 has 7 unique medium detections (e.g., password resets, unusual PowerShell invocations), whereas report 1 has only 4 unique medium detections 
+report_2.pdf
+. Unique detections often indicate novel or coordinated tactics, warranting closer scrutiny.
+Alert Context and Criticality:
+Report 2 includes alerts like Password Reset By Admin (1 alert) and Uncommon Svchost Parent Process (1 alert), which may indicate compromise or misuse of administrative privileges 
+report_2.pdf
+. These alerts are not present in report 1 and could signal targeted attacks.
+The presence of 3 unique high alerts in report 2 (all System File Execution Location Anomaly) suggests potential tampering with critical system files, a red flag for persistence mechanisms or privilege escalation 
+report_2.pdf
+.
+System Assignment:
+Report 2 is associated with Computer_2, which has 7 unique medium detections and 1 unique high detection, indicating a single system may be the source of multiple alerts. This concentration of alerts on a single host raises suspicion of a targeted compromise 
+report_2.pdf
+. In contrast, report 1's alerts are spread across multiple detections but lack the same level of unique alert diversity.
+Criticality Rating:
+
+Report 2: High (due to unique alert diversity, administrative misuse indicators, and system file anomalies).
+Report 1: Medium (primarily volume-driven alerts like Process Ran With High Privilege, which may include false positives) 
+report_1.pdf
+.
+Prioritize Computer_2 (report 2) for immediate analysis to investigate potential privilege abuse, system file tampering, and coordinated suspicious activity.""","""Based on the analysis of the five Hayabusa reports, System 2 (associated with source_id 2) should be prioritized for immediate analysis. Here's the breakdown and reasoning:
+
+Key Metrics for Prioritization
+Severity and Volume of Alerts
+System 2 has 360 high-severity alerts (all triggered by the rule "User Added To Local Admin Grp" by Zach Mathis) and 12 medium alerts (password resets).
+This is the highest volume of alerts across all systems, with a critical alert type repeated 360 times. Bulk additions to admin groups are a strong indicator of compromise or a misconfigured policy, both of which require urgent investigation.
+Unique Detections
+While the unique detections are low (1 high + 1 medium), the repetition of the same alert rule suggests a systemic issue (e.g., a script or automated process adding users to admin groups). This is a red flag for potential abuse or a misconfiguration.
+Contextual Anomalies
+The alert "User Added To Local Admin Grp" is a high-severity detection rule, and its repetition at this scale is highly suspicious. It could indicate:
+A compromised account escalating privileges.
+A misconfigured automation tool (e.g., a deployment script) erroneously adding users.
+A deliberate attack to expand access.
+Comparison with Other Systems
+System 3 has a similar alert pattern (360 high alerts) and should also be investigated, but System 2 has the same alert rule triggered first and may represent the origin of the issue.
+Systems 4 and 5 have medium-severity alerts (e.g., suspicious processes) but lack high-severity alerts. While still concerning, they are lower priority than a system with repeated high-severity alerts.
+System 1 has a mix of alerts but a much lower volume (only 5 total detections), making it the least critical.
+Why System 2 is Critical
+High alert volume: 360 alerts for the same rule suggest a systemic issue, not a one-off event.
+High-severity alert type: Admin group additions are a critical security control. Abuse of this could lead to lateral movement or data exfiltration.
+Potential for cascading impact: If this system is part of a network, the compromise could spread to other systems.
+Next Steps for Analysis
+Investigate the source of the 360 admin group additions:
+Check logs for the user accounts or processes responsible.
+Determine if the additions were intentional or part of a malicious campaign.
+Review the alert rule:
+Confirm if the rule is correctly configured and not generating false positives at scale.
+Assess the system's role:
+If it’s a critical server or part of a domain controller, the risk is even higher.
+Conclusion: System 2 requires immediate attention due to the unprecedented volume of high-severity alerts, which strongly indicate a potential security breach or critical misconfiguration. Delaying analysis could lead to further compromise or data loss."""]
+
+cisco=["""The IT Forensic Hayabusa Scan Tool (HST) is a free, open-source tool that can be used to scan for evidence of compromise on Windows systems. It was developed by the National Cybersecurity and Communications Integration Center (NCCIC), part of the Department of Homeland Security’s Cybersecurity and Infrastructure Security Agency (CISA).
+The HST uses a variety of techniques to detect signs of malicious activity, including:
+
+File system analysis: The tool scans for files that are known to be associated with malware or other types of malicious software. It also looks for files that have been modified in ways that could indicate compromise.
+Registry analysis: The tool examines the Windows registry for entries that are indicative of malware or other types of malicious activity.
+Network traffic analysis: The tool monitors network traffic for signs of suspicious activity, such as attempts to communicate with known malicious IP addresses.
+The HST is designed to be used in conjunction with other security tools and processes. It should not be relied upon as the sole means of detecting compromise on a system. However, it can provide valuable insights into potential threats that may otherwise go unnoticed.
+How does the IT Forensic Hayabusa Scan Tool work?
+The IT Forensic Hayabusa Scan Tool (HST) is a free, open-source tool that can be used to scan for evidence of compromise on Windows systems. It was developed by the National Cybersecurity and Communications Integration Center (NCCIC), part of the Department of Homeland Security’s Cybersecurity and Infrastructure Security Agency (CISA).
+The HST uses a variety of techniques to detect signs of malicious activity, including:
+File system analysis: The tool scans for files that are known to be associated with malware or other types of malicious software. It also looks for files that have been modified in ways that could indicate compromise.
+The HST is designed to be used in conjunction with other security tools and processes. It should not be relied upon as the sole means of detecting compromise on a system. However, it can provide valuable insights into potential threats that may otherwise go unnoticed.
+What are the benefits of using the IT Forensic Hayabusa Scan Tool?
+The IT Forensic Hayabusa Scan Tool (HST) is a free, open-source tool that can be used to scan for evidence of compromise on Windows systems. It was developed by the National Cybersecurity and Communications Integration Center (NCCIC), part of the Department of Homeland Security’s Cybersecurity and Infrastructure Security Agency (CISA).
+The HST uses a variety of techniques to detect signs of malicious activity, including:
+File system analysis: The tool scans for files that are known to be associated with malware or other types of malicious software. It also looks for files that have been modified in ways that could indicate compromise.
+The HST is designed to be used in conjunction with other security tools and processes. It should not be relied upon as the sole means of detecting compromise on a system. However, it can provide valuable insights into potential threats that may otherwise go unnoticed.
+Who can use the IT Forensic Hayabusa Scan Tool?
+The IT Forensic Hayabusa Scan Tool (HST) is a free, open-source tool that can be used to scan for evidence of compromise on Windows systems. It was developed by the National Cybersecurity and Communications Integration Center (NCCIC), part of the Department of Homeland Security’s Cybersecurity and Infrastructure Security Agency (CISA).
+The HST uses a variety of techniques to detect signs of malicious activity, including:
+File system analysis: The tool scans for files that are known to be associated with malware or other types of malicious software. It also looks for files that have been modified in ways that could indicate compromise.
+The HST is designed to be used in conjunction with other security tools and processes. It should not be relied upon as the sole means of detecting compromise on a system. However, it can provide valuable insights into potential threats that may otherwise go unnoticed.""","""The IT Forensic Hayabusa Scan Tool (HST) is a free, open-source tool that can be used to scan for evidence of compromise on Windows systems. It was developed by the National Cybersecurity and Communications Integration Center (NCCIC), part of the Department of Homeland Security’s Cybersecurity and Infrastructure Security Agency (CISA).
+The HST uses a variety of techniques to detect signs of malicious activity, including:
+
+File system analysis: The tool scans for files that are known to be associated with malware or other types of malicious software. It also looks for files that have been modified in ways that could indicate compromise.
+The HST is designed to be used in conjunction with other security tools and processes. It should not be relied upon as the sole means of detecting compromise on a system. However, it can provide valuable insights into potential threats that may otherwise go unnoticed.""", """The IT Forensic Hayabusa Scan Tool is a powerful tool that can scan and analyze various types of digital evidence, including:
+
+File systems: It can examine file system structures, metadata, and attributes to identify potential evidence.
+Registry entries: The tool can analyze registry keys and values to detect changes or modifications made by malware or unauthorized users.
+Network artifacts: Hayabusa Scan Tool can scan network logs and configurations to identify suspicious activities or connections.
+Memory dumps: It can analyze memory dumps to extract information about running processes, loaded modules, and other relevant data.
+Disk images: The tool can process disk images to recover deleted files, analyze file system structures, and detect hidden partitions.
+Cloud storage artifacts: Hayabusa Scan Tool can scan cloud storage services like Google Drive or Dropbox to identify potential evidence stored in the cloud.
+Email archives: It can examine email archives to extract attachments, headers, and other relevant information for forensic analysis.
+Browser history: The tool can analyze browser history files to identify visited websites, search queries, and other user activities.
+Application logs: Hayabusa Scan Tool can process application-specific log files to detect anomalies or suspicious behavior.
+System configuration data: It can examine system configuration settings, including installed software, network configurations, and security policies.
+By leveraging these capabilities, the IT Forensic Hayabusa Scan Tool provides a comprehensive analysis of digital evidence, helping investigators uncover hidden artifacts and reconstruct events related to cyber incidents.""", """The system to prioritize for analysis is Computer_1, as it has a higher number of unique high alerts (2) compared to Computer_2 (1). Additionally, Computer_1 has 4 unique medium alerts, while Computer_2 has only 7. This indicates that Computer_1 may be experiencing more critical issues or potential threats than Computer_2 based on the alert counts.""", """Computer_5(4)"""]
 nina_v2_answers = ["""The IT Forensic Hayabusa Scan Tool is a specialized log analysis and threat detection tool designed for cybersecurity incident response and digital forensics. It is part of the broader Hayabusa suite, which focuses on parsing and analyzing system logs (e.g., Windows Event Logs, Linux logs, and application logs) to identify suspicious or malicious activity. Here's a breakdown of its key aspects:
 
 Key Features and Purpose
@@ -663,7 +978,7 @@ def test_case():
     )
     test_case_frage_1 = LLMTestCase(
         input="What is the IT Forensic Hayabusa Scan Tool?",
-        actual_output=nina_v2_answers[0],
+        actual_output=nina_v3_answers[0],
         expected_output="""
             Hayabusa is an open-source, high-performance forensic and threat hunting tool designed to analyze Windows event logs. 
             Developed by the Yamato Security group in Japan, its name—meaning "peregrine falcon" in Japanese—reflects its focus 
@@ -709,7 +1024,7 @@ def test_case():
 
     test_case_frage_2= LLMTestCase(
         input="What are the limitations of the IT Forensic Hayabusa Scan Tool?",
-        actual_output=nina_v2_answers[1],
+        actual_output=nina_v3_answers[1],
         expected_output="""
             While Hayabusa is a powerful tool for Windows event log analysis and threat hunting, it has certain limitations that users should be aware of:
 
@@ -765,7 +1080,7 @@ def test_case():
 
     test_case_frage_3= LLMTestCase(
         input="What data can the IT Forensic Hayabusa Scan Tool analyze?",
-        actual_output=nina_v2_answers[2],
+        actual_output=nina_v3_answers[2],
         expected_output="""The IT Forensic Hayabusa Scan Tool is designed to analyze Windows Event Logs (EVTX files) for the purposes of digital forensics and threat hunting. 
             It focuses on identifying suspicious behavior and potential security incidents by parsing and evaluating event log data.
 
@@ -789,7 +1104,7 @@ def test_case():
         input="""Read the two provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=nina_v2_answers[3],
+        actual_output=nina_v3_answers[3],
             
         expected_output="""The system associated with Report 2 should be prioritized for analysis due to the presence of a wider variety of unique detections, indicating potentially more complex or coordinated suspicious activity. Notable alerts include:
 
@@ -809,7 +1124,7 @@ def test_case():
         input="""Read the five provided Hayabusa
                 reports and tell me which system I
                 should analyze first and why.""",
-        actual_output=nina_v2_answers[4],
+        actual_output=nina_v3_answers[4],
         expected_output="""Investigation Priority Summary:
 
             Report 2 Highest Priority
@@ -840,7 +1155,7 @@ def test_case():
     )
     #edit this function to change to correct question
     print("1")
-    assert_test(test_case_frage_5, [correctness_metric])
+    assert_test(test_case_frage_3, [correctness_metric])
     print("2")
 
    # assert_test(test_case_frage_2, [correctness_metric])
